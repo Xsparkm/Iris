@@ -11,6 +11,7 @@ import googletrans
 from googletrans import Translator
 translator = Translator()
 
+name = 'sparkm'
 engine = pyttsx3.init('sapi5')
 voices = engine.getProperty('voices')
 #print(voices)
@@ -23,11 +24,11 @@ def speak(audio):
 def wishme():
     hour = int(datetime.datetime.now().hour)
     if hour >=0 and hour<=12:
-        speak("Good Morning Sparkm! ")
+        speak(f"Good Morning {name}! ")
     elif hour >=12 and hour <=18:
-        speak("Good Afternoon Sparkm! ")
+        speak(f"Good Afternoon {name}! ")
     else:
-        speak("Good Evening Sparkm! ")
+        speak(f"Good Evening {name}! ")
         
 def takeCommand():
     r = sr.Recognizer()
@@ -70,7 +71,12 @@ if __name__=='__main__':
             query = query.replace('search for',"")
             speak(f"Searching for {query} in google")
             webbrowser.open(f'https://www.google.com/search?q={query}')
-        
+            
+        elif 'youtube' in query:
+            query = query.replace('in youtube',"")
+            query = query.replace('search for',"")
+            speak(f"Searching for {query} in youtube")
+            webbrowser.open(f'https://www.youtube.com/results?search_query={query}')
         
         elif 'play rock paper scissors' in query:
             speak("Enter a choice (rock, paper, scissors): ") 
