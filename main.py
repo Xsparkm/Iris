@@ -2,6 +2,7 @@ import pyttsx3
 import datetime
 import speech_recognition as sr
 import os
+import json
 import webbrowser
 import wikipedia
 import random
@@ -10,6 +11,9 @@ import requests
 import googletrans
 from googletrans import Translator
 translator = Translator()
+
+from dotenv import load_dotenv
+load_dotenv()
 
 name = 'sparkm'
 engine = pyttsx3.init('sapi5')
@@ -33,8 +37,8 @@ def wishme():
 def takeCommand():
     r = sr.Recognizer()
     with sr.Microphone() as source:
-        print("listening...") 
-        speak('listening.....')
+        print("listening...")
+        speak("listening") 
         r.pause_threshold = 1
         audio = r.listen(source)
 
@@ -42,12 +46,37 @@ def takeCommand():
         print("Recognizing...")
         query = r.recognize_google(audio, language='en-in')
         print(f"User said: {query}\n")
-        speak(query)
+        
 
     except Exception as e:
         speak("I was unable to recognize. Please say that again")
         print("I was unable to recognize. Please say that again")
         return "None"
+    return query
+
+def chatCommand():
+    r = sr.Recognizer()
+    with sr.Microphone() as source:
+        print("listening...") 
+        r.pause_threshold = 1
+        audio = r.listen(source)
+
+    try:
+        query = r.recognize_google(audio, language='en-in')
+        print(f"User said: {query}\n")
+        
+
+    except Exception as e:
+        speak("I was unable to recognize. Please say that again")
+        print("I was unable to recognize. Please say that again")
+        r.pause_threshold = 1
+        audio = r.listen(source)
+        speak('listening')
+
+        print("Recognizing...")
+        query = r.recognize_google(audio, language='en-in')
+        print(f"User said: {query}\n")
+        speak(query)
     return query
 
 if __name__=='__main__':
@@ -104,6 +133,8 @@ if __name__=='__main__':
                 speak("Rock smashes scissors! You lose.")
 
         elif 'play akinator' in query:
+            #try
+
             while True:
                 aki = akinator.Akinator()
                 speak(aki.start_game())
@@ -141,5 +172,31 @@ if __name__=='__main__':
                 text_translated = translator.translate(text, dest=lang_to).text
                 print(text_translated)
                 speak(text_translated)
+
+        elif 'chat mode' in query:
+            speak('entering chat mode!')
+            while True:
+                message = chatCommand()
+                url = "https://random-stuff-api.p.rapidapi.com/ai"
+                Aut= os.getenv['Authorization']
+                API_KEY= os.getenv['X-RapidAPI-Key']
+                API_HOST = os.getenv['X-RapidAPI-Host']
+                                
+
+                querystring = {'msg': message,"bot_name":"Iris", "bot_name":"Iris","bot_gender":"female","bot_master":"sparkm","bot_age":"0","bot_birth_year":"2001","bot_birth_date":"8th June, 2022","bot_favorite_color":"Dark Blue","bot_favorite_artist":"TK" }
+                headers = {
+                    "Authorization": Aut,
+                    "X-RapidAPI-Key": API_KEY,
+                    "X-RapidAPI-Host": API_HOST
+                }
+
+                response = requests.request("GET", url, headers=headers, params=querystring)
+                shush = response.json()
+                out = shush["AIResponse"]
+                print(out)
+
+
+
+                speak(out)
 
  
